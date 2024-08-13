@@ -1,0 +1,5 @@
+CREATE TABLE plans (
+  id UUID NOT NULL,
+  price FLOAT NOT NULL,
+  CONSTRAINT pk_plan PRIMARY KEY(id)
+);

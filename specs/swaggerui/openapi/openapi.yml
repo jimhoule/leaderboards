@@ -1,0 +1,253 @@
+openapi: '3.0.0'
+info:
+    title: Leaderboards RESTful API
+    description: API for interacting with application
+    version: 1.0.0
+servers:
+    - url: http://localhost:5000
+      description: Local server
+paths:
+    # *********
+    # * GAMES *
+    # *********
+    v1/games/{id}:
+        get:
+            summary: Gets a Game by ID
+            description: Returns a found Game object by ID
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                    type: string
+                    required: true
+                    description: ID of the Tenant to retrieve
+            responses:
+                200:
+                    description: Successful response
+                    content:
+                    application/json:
+                        schema:
+                        $ref: '#/components/schemas/Tenant'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    v1/games:
+        post:
+            summary: Creates a Game
+            description: Returns a newly created Game object
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    description: Name of Game
+                                mode:
+                                    type: Mode
+                                    description: Mode of Game
+            responses:
+                201:
+                    description: Successful response
+                    content:
+                        application/json:
+                            schema:
+                            $ref: '#/components/schemas/Game'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    v1/games/{id}/start:
+        patch:
+            summary: Starts a Game
+            description: Returns a started Game object
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                    type: string
+                    required: true
+                    description: ID of the Game to start
+            responses:
+                200:
+                    description: Successful response
+                    content:
+                        application/json:
+                            schema:
+                            $ref: '#/components/schemas/Game'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    v1/games/{id}/end:
+        patch:
+            summary: Ends a Game
+            description: Returns a started Game object
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                    type: string
+                    required: true
+                    description: ID of the Game to start
+            responses:
+                200:
+                    description: Successful response
+                    content:
+                        application/json:
+                            schema:
+                            $ref: '#/components/schemas/Game'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+components:
+    securitySchemes:
+        BearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT
+    schemas:
+        # *********
+        # * GAMES *
+        # *********
+        Mode:
+            type: string
+            enum:
+                - SOLOS
+                - DUOS
+                - TRIOS
+                - SQUADS
+
+        Game:
+            type: object
+            required:
+                - id
+                - name
+                - mode
+                - startedAt
+                - enddedAt
+            properties:
+                id:
+                    type: string
+                    description: Unique identifier
+                name:
+                    type: string
+                    description: Name
+                mode:
+                    $ref: '#/components/schemas/Mode'
+                startedAt:
+                    type: string
+                    description: Start date
+                endedAt:
+                    type: string
+                    description: End date
+
+        # ***********
+        # * PLAYERS *
+        # ***********
+        Player:
+            type: object
+            properties:
+                id:
+                    type: string
+                    description: Unique identifier
+                name:
+                    type: string
+                    description: Name
+
+        # ****************
+        # * LEADERBOARDS *
+        # ****************
+        Period:
+            type: string
+            enum:
+                - DAILY
+                - WEEKLY
+                - ALL_TIME
+
+        Leaderboard:
+            type: object
+            required:
+                - id
+                - mode
+                - period
+                - fromDate
+                - toDate
+            properties:
+                id:
+                    type: string
+                    description: Unique identifier
+                mode:
+                    $ref: '#/components/schemas/Mode'
+                period:
+                    $ref: '#/components/schemas/Period'
+                fromDate:
+                    type: string
+                    description: From date
+                toDate:
+                    type: string
+                    description: To date
+
+        LeaderboardEntry:
+            type: object
+            required:
+                - playerName
+                - rank
+                - eliminationCount
+            properties:
+                playerName:
+                    type: string
+                    description: Name of player
+                rank:
+                    type: integer
+                    format: int32
+                    description: Rank of player
+                eliminationCount:
+                    type: number
+                    format: double
+                    description: Eliminiation count of player
+
+        LeaderboardTop10:
+            type: object
+            required:
+                - leaderboard
+                - entries
+            properties:
+                leaderboard:
+                    $ref: '#/components/schemas/Leaderboard'
+                entries:
+                    type: array
+                    description: Entries
+                    items:
+                        $ref: '#/components/schemas/LeaderboardEntry'
+
+        # **********
+        # * ERRORS *
+        # **********
+        Error:
+            type: object
+            required:
+                - code
+            properties:
+                code:
+                    type: string
+                    description: Code
+                message:
+                    type: string
+                    description: Message
+                    
