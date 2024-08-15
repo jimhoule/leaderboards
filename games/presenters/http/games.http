@@ -1,0 +1,19 @@
+### NOTE: To use this file VSC REST Client extension must be installed 
+
+### Finds a Game by ID
+GET http://localhost:5000/games/<game_id>
+
+### Creates a Game
+POST http://localhost:5000/games
+Content-Type: application/json
+
+{
+    "name": "name",
+    "mode": "mode"
+}
+
+### Starts a Game
+PATCH http://localhost:5000/games/<game_id>/start
+
+### Ends a Game
+PATCH http://localhost:5000/games/<game_id>/end
