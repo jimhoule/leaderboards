@@ -27,5 +27,9 @@ func (gs *GamesService) Start(startGamePayload *payloads.StartGamePayload) (*mod
 }
 
 func (gs *GamesService) End(endGamePayload *payloads.EndGamePayload) (*models.Game, error) {
-	return gs.GamesRepository.End(endGamePayload.Id)
+	return gs.GamesRepository.End(endGamePayload.Id, endGamePayload.WinnerId)
+}
+
+func (gs *GamesService) Join(joinGamePayload *payloads.JoinGamePayload) (*models.Game, error) {
+	return gs.GamesRepository.Join(joinGamePayload.Id, joinGamePayload.PlayerId)
 }

@@ -60,10 +60,38 @@ func (gc *GamesController) Start(writer http.ResponseWriter, request *http.Reque
 }
 
 func (gc *GamesController) End(writer http.ResponseWriter, request *http.Request) {
-	id := router.GetUrlParam(request, "id")
+	var endGameDto dtos.EndGameDto
+	err := utils.ReadHttpRequestBody(writer, request, &endGameDto)
+	if err != nil {
+		utils.WriteHttpError(writer, http.StatusInternalServerError, err)
+		return
+	}
 
+	id := router.GetUrlParam(request, "id")
 	game, err := gc.GamesService.End(&payloads.EndGamePayload{
 		Id: id,
+		WinnerId: endGameDto.WinnerId,
+	})
+	if err != nil {
+		utils.WriteHttpError(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteHttpResponse(writer, http.StatusOK, game)
+}
+
+func (gc *GamesController) Join(writer http.ResponseWriter, request *http.Request) {
+	var joinGameDto dtos.JoinGameDto
+	err := utils.ReadHttpRequestBody(writer, request, &joinGameDto)
+	if err != nil {
+		utils.WriteHttpError(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	id := router.GetUrlParam(request, "id")
+	game, err := gc.GamesService.Join(&payloads.JoinGamePayload{
+		Id: id,
+		PlayerId: joinGameDto.PlayerId,
 	})
 	if err != nil {
 		utils.WriteHttpError(writer, http.StatusInternalServerError, err)

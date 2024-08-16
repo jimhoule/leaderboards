@@ -1,5 +1,6 @@
 package payloads
 
 type EndGamePayload struct {
-	Id string
+	Id       string
+	WinnerId string
 }

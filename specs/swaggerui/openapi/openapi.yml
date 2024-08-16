@@ -94,6 +94,16 @@ paths:
         patch:
             summary: Ends a Game
             description: Returns a started Game object
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                winnerId:
+                                    type: string
+                                    description: ID of player who won the game
+
             parameters:
                 - in: path
                   name: id
@@ -101,6 +111,40 @@ paths:
                     type: string
                     required: true
                     description: ID of the Game to start
+            responses:
+                200:
+                    description: Successful response
+                    content:
+                        application/json:
+                            schema:
+                            $ref: '#/components/schemas/Game'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    v1/games/{id}/join:
+        patch:
+            summary: Joins a Game
+            description: Returns a joined Game object
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                playerId:
+                                    type: string
+                                    description: ID of player who joins the game
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                    type: string
+                    required: true
+                    description: ID of the Game to join
             responses:
                 200:
                     description: Successful response

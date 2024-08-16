@@ -3,7 +3,8 @@ package games
 import (
 	"main/games/application/services"
 	"main/games/domain/factories"
-	"main/games/domain/models"
+	"main/games/infrastructures/persistence/fake/entities"
+	"main/games/infrastructures/persistence/fake/mappers"
 	"main/games/infrastructures/persistence/fake/repositories"
 	"main/games/presenters/http/controllers"
 	"main/router"
@@ -16,7 +17,8 @@ func GetService() *services.GamesService {
 			UuidService: uuid.GetService(),
 		},
 		GamesRepository: &repositories.FakeGamesRepository{
-			Games: []*models.Game{},
+			GameEntities: []*entities.Game{},
+			GamesMapper: &mappers.GamesMapper{},
 		},
 	}
 }
@@ -30,4 +32,5 @@ func Init(mainRouter *router.MainRouter) {
 	mainRouter.Post("/games", gamesController.Create)
 	mainRouter.Patch("/games/{id}/start", gamesController.Start)
 	mainRouter.Patch("/games/{id}/end", gamesController.End)
+	mainRouter.Patch("/games/{id}/join", gamesController.Join)
 }
