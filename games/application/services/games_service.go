@@ -12,6 +12,10 @@ type GamesService struct {
 	GamesRepository ports.GameRepositoryPort
 }
 
+func (gs *GamesService) GetPlayers(id string) (map[string]*models.Gameplayer, error) {
+	return gs.GamesRepository.GetPlayers(id)
+}
+
 func (gs *GamesService) GetById(id string) (*models.Game, error) {
 	return gs.GamesRepository.GetById(id)
 }

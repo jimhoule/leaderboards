@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"main/games/application/payloads"
 	"main/games/application/services"
 	"main/games/presenters/http/dtos"
+	"main/queue"
+	"main/queue/topics"
 	"main/router"
 	"main/router/utils"
 	"net/http"
@@ -11,6 +14,7 @@ import (
 
 type GamesController struct{
 	GamesService *services.GamesService
+	QueueProducerHandler *queue.ProducerHandler
 }
 
 func (gc *GamesController) GetById(writer http.ResponseWriter, request *http.Request) {
@@ -75,6 +79,18 @@ func (gc *GamesController) End(writer http.ResponseWriter, request *http.Request
 	if err != nil {
 		utils.WriteHttpError(writer, http.StatusInternalServerError, err)
 		return
+	}
+
+	// Sends queue messages to update players score and leaderboards
+	gamePlayers, err := gc.GamesService.GetPlayers(id)
+	for _, gamePlayer := range gamePlayers {
+		encodedGameplayer, err := json.Marshal(gamePlayer)
+		if err != nil {
+			utils.WriteHttpError(writer, http.StatusInternalServerError, err)
+			return
+		}
+
+		gc.QueueProducerHandler.SendMessage(topics.PlayerScoreChanged, encodedGameplayer)
 	}
 
 	utils.WriteHttpResponse(writer, http.StatusOK, game)

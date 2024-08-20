@@ -1,6 +1,6 @@
 package entities
 
 type Gameplayer struct {
-	Id       string
+	PlayerId string
 	IsWinner bool
 }

@@ -11,10 +11,21 @@ import (
 type FakeGamesRepository struct {
 	GameEntities []*entities.Game
 	GamesMapper *mappers.GamesMapper
+	GameplayersMapper *mappers.GameplayersMapper
 }
 
 func (fgr *FakeGamesRepository) Reset() {
 	fgr.GameEntities = []*entities.Game{}
+}
+
+func (fgr *FakeGamesRepository) GetPlayers(id string) (map[string]*models.Gameplayer, error) {
+	// Checks if game entity exists
+	gameEntity, err := getGameEntityById(fgr, id)
+	if gameEntity == nil {
+		return nil, err
+	}
+	
+	return fgr.GameplayersMapper.ToModels(gameEntity.GamePlayers) , nil
 }
 
 func (fgr *FakeGamesRepository) GetById(id string) (*models.Game, error) {
@@ -105,7 +116,7 @@ func (fgr *FakeGamesRepository) Join(id string, playerId string) (*models.Game, 
 	}
 
 	gameEntity.GamePlayers[playerId] = &entities.Gameplayer{
-		Id: playerId,
+		PlayerId: playerId,
 		IsWinner: false,
 	}
 
