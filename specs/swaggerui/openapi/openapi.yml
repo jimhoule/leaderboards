@@ -20,14 +20,14 @@ paths:
                   schema:
                     type: string
                     required: true
-                    description: ID of the Tenant to retrieve
+                    description: ID of the Game to retrieve
             responses:
                 200:
                     description: Successful response
                     content:
                     application/json:
                         schema:
-                        $ref: '#/components/schemas/Tenant'
+                        $ref: '#/components/schemas/Game'
                 500:
                     description: Internal Server Error
                     content:
@@ -159,6 +159,77 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/Error'
 
+    # ***********
+    # * PLAYERS *
+    # ***********
+    v1/players:
+        get:
+            summary: Gets all Players
+            description: Returns all Players object
+            responses:
+                200:
+                    description: Successful response
+                    content:
+                    application/json:
+                        schema:
+                        $ref: '#/components/schemas/Players'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+        post:
+            summary: Creates a Player
+            description: Returns a newly created Player object
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                                    description: Name of Player
+            responses:
+                201:
+                    description: Successful response
+                    content:
+                        application/json:
+                            schema:
+                            $ref: '#/components/schemas/Player'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
+    v1/players/{id}:
+        get:
+            summary: Gets a Player by ID
+            description: Returns a found Player object by ID
+            parameters:
+                - in: path
+                  name: id
+                  schema:
+                    type: string
+                    required: true
+                    description: ID of the Player to retrieve
+            responses:
+                200:
+                    description: Successful response
+                    content:
+                    application/json:
+                        schema:
+                        $ref: '#/components/schemas/Player'
+                500:
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+
 components:
     securitySchemes:
         BearerAuth:
@@ -213,6 +284,19 @@ components:
                 name:
                     type: string
                     description: Name
+                wins:
+                    type: number
+                    description: Wins count
+
+                losses:
+                    type: number
+                    description: Losses count
+
+        Players:
+            type: array
+            description: All Players
+            items:
+                $ref: '#/components/schemas/Player'
 
         # ****************
         # * LEADERBOARDS *
